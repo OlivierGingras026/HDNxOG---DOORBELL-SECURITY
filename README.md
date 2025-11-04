@@ -34,8 +34,5 @@ https://youtu.be/OrRSMOfVJPg
 
 
 
-That’s where we’re at for Milestone 2.
-
-
 
 
