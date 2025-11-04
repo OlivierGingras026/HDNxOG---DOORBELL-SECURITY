@@ -8,7 +8,7 @@ Here are all the details for Milestone 2 from Group 9.
 
 * Yacine Ihaddadene
 
-**Adafruit IO dashboard screenshot**
+**Adafruit IO dashboard screenshot( using CLI for User Interaction )**
 
 <img width="1905" height="923" alt="image" src="https://github.com/user-attachments/assets/9696a5a0-8dab-471f-8a98-d6f5246a0103" />
 
