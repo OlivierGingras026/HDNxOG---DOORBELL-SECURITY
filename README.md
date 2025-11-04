@@ -8,9 +8,14 @@ Here are all the details for Milestone 2 from Group 9.
 
 * Yacine Ihaddadene
 
+**Adafruit IO dashboard screenshot**
+
+<img width="1905" height="923" alt="image" src="https://github.com/user-attachments/assets/9696a5a0-8dab-471f-8a98-d6f5246a0103" />
+
+
 **Public cloud folder link with daily uploads**
 
-(to be added here)
+[Google Drive with Environment and Security Data](https://drive.google.com/drive/folders/1WrucwgLW0M628I1tBLCbrdHpttixRFfV?usp=sharing)
 
 **Short Reflection**
 
@@ -25,7 +30,7 @@ The only negative point we still have right now is that we weren’t able to red
 
 **Youtube Video**
 
-https://youtu.be/VgH72JPGwI0
+https://youtu.be/OrRSMOfVJPg
 
 
 
