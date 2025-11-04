@@ -43,6 +43,10 @@ The only negative point we still have right now is that we weren’t able to red
 
 ## Photos of the Project
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/37421cf4-1b49-4fdd-a1e5-8d1907b74ed6" alt="Project photo 1" width="360" />
+  <img src="https://github.com/user-attachments/assets/67b9724c-76a7-4627-accb-14588d0711be" alt="Project photo 2" width="360" />
+</p>
 
 
 ## **Youtube Video**
