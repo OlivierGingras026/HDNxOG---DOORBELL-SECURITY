@@ -1,6 +1,5 @@
 # HDNxOG — DOORBELL SECURITY
 
-Here are all the details for Milestone 2 from Group 9.
 
 **Team Members**
 
