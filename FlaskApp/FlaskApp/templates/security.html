@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Security Monitoring{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+    <h2 class="fw-bold"><i class="bi bi-shield-lock me-2"></i>Security Monitoring</h2>
+</div>
+
+<div class="security-control-panel shadow-lg p-4 mb-5">
+    <h4 class="fw-bold mb-3"><i class="bi bi-gear-fill me-2"></i>Security System Control</h4>
+
+    <div class="d-flex flex-column align-items-center">
+        <span id="controlStatusBadge" class="control-badge mb-3">--</span>
+
+        <button id="securityToggleButton" class="toggle-btn" onclick="toggleSecuritySystem()">
+            <i id="toggleIcon" class="bi me-2"></i>
+            <span id="toggleText">...</span>
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-activity"></i>
+            <h4>Live Motion</h4>
+            <h2 id="live-motion">--</h2>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+    <h4 class="fw-bold mb-3"><i class="bi bi-bar-chart-line me-2"></i>Motion History</h4>
+
+    <label class="form-label fw-semibold">Select data source:</label>
+    <select id="mode" class="form-select mb-3">
+        <option value="live">LIVE (Last Hour)</option>
+        <option value="db">DATABASE (Past Day)</option>
+    </select>
+
+    <div id="db-options" style="display:none;">
+        <label class="form-label fw-semibold">Select a date:</label>
+        <input id="motionDate" type="date" class="form-control mb-3">
+    </div>
+
+    <button onclick="loadMotionGraph()" class="btn btn-primary w-100 py-2">
+        <i class="bi bi-graph-up-arrow me-2"></i>Load Motion Graph
+    </button>
+</div>
+
+<div class="card shadow-sm p-4">
+    <canvas id="motionChart" height="120"></canvas>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let chartRef = null;
+let isSystemArmed = false;
+
+// =====================
+// SECURITY CONTROL LOGIC
+// =====================
+
+async function updateSecurityStatusUI(isArmed) {
+    const statusBadge = document.getElementById("controlStatusBadge");
+    const toggleButton = document.getElementById("securityToggleButton");
+    const toggleIcon = document.getElementById("toggleIcon");
+    const toggleText = document.getElementById("toggleText");
+
+    isSystemArmed = isArmed;
+
+    // Update Status Badge (Uses local styles defined below)
+    statusBadge.innerText = isArmed ? "ARMED" : "DISARMED";
+    statusBadge.classList.toggle('status-armed', isArmed);
+    statusBadge.classList.toggle('status-disarmed', !isArmed);
+
+    // Update Button appearance and text
+    toggleButton.classList.toggle('armed-state', isArmed);
+    toggleButton.classList.toggle('disarmed-state', !isArmed);
+
+    toggleIcon.className = isArmed ? "bi bi-unlock-fill me-2" : "bi bi-lock-fill me-2";
+    toggleText.innerText = isArmed ? "Disable Security" : "Enable Security";
+}
+
+async function fetchSecurityStatus() {
+    try {
+        const res = await fetch("/api/status/security");
+        const data = await res.json();
+        if (data && data.armed_status !== undefined) {
+            // Initialize UI with the current status from the backend
+            updateSecurityStatusUI(data.armed_status);
+        } else {
+             updateSecurityStatusUI(false);
+        }
+    } catch (err) {
+        console.error("Error fetching security status:", err);
+        updateSecurityStatusUI(false);
+    }
+}
+
+async function toggleSecuritySystem() {
+    const newState = !isSystemArmed;
+    const action = newState ? 'arm' : 'disarm';
+
+    // Optimistic UI Update
+    updateSecurityStatusUI(newState);
+
+    try {
+        const res = await fetch(`/api/control/security?action=${action}`, { method: 'POST' });
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(`Failed to ${action} security system. Status reverted.`);
+            // Revert UI if API call fails
+            updateSecurityStatusUI(!newState);
+        }
+    } catch (err) {
+        console.error("Error toggling security:", err);
+        alert("Network error. Could not toggle security system.");
+        // Revert UI if network error
+        updateSecurityStatusUI(!newState);
+    }
+}
+
+// =====================
+// EXISTING LOGIC (Motion, Graph)
+// =====================
+document.getElementById("motionDate").value = new Date().toISOString().slice(0,10);
+
+async function refreshLiveMotion() {
+    try {
+        const res = await fetch("/api/live/motion");
+        const data = await res.json();
+        document.getElementById("live-motion").innerText =
+            data && data.value !== undefined ? data.value : "--";
+    } catch (err) {
+        console.log("Live motion fetch error:", err);
+        document.getElementById("live-motion").innerText = "--";
+    }
+}
+
+// Initialize and refresh
+fetchSecurityStatus();
+refreshLiveMotion();
+setInterval(refreshLiveMotion, 5000);
+
+document.getElementById("mode").addEventListener("change", () => {
+    document.getElementById("db-options").style.display =
+        document.getElementById("mode").value === "db" ? "block" : "none";
+});
+
+// Load Motion Graph logic (omitted for brevity, assume existing)
+async function loadMotionGraph() {
+    // ... existing function logic ...
+    const mode = document.getElementById("mode").value;
+    let data = [];
+
+    if (chartRef) chartRef.destroy();
+
+    try {
+        if (mode === "live") {
+            const res = await fetch("/api/live/hour/motion");
+            data = await res.json();
+        } else {
+            const date = document.getElementById("motionDate").value;
+            if (!date) {
+                alert("Please select a date first.");
+                return;
+            }
+            const res = await fetch(`/api/history_db/motion?date=${date}`);
+            data = await res.json();
+        }
+    } catch (err) {
+        console.log("Error loading motion data:", err);
+        return;
+    }
+
+    const labels = data.map(x => x.time);
+    const values = data.map(x => x.value || 0);
+
+    const ctx = document.getElementById("motionChart");
+    chartRef = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels,
+            datasets: [{
+                label: "Motion Events (every 5 min)",
+                data: values,
+                backgroundColor: "#5c4aff",
+                borderColor: "#3726ff",
+                borderWidth: 2,
+                hoverBackgroundColor: "#7d6cff"
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+</script>
+
+<style>
+    /* Security Control Panel Styling (Local to security.html) */
+    .security-control-panel {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .control-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        font-size: 1.5rem;
+        color: white;
+        min-width: 150px;
+        transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* Uses CSS variables from style.css */
+    .control-badge.status-disarmed {
+        background-color: var(--danger);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Uses CSS variables from style.css */
+    .control-badge.status-armed {
+        background-color: var(--success);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+
+    .toggle-btn {
+        padding: 10px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        min-width: 200px;
+    }
+
+    /* Button to ENABLE (disarmed state) */
+    .toggle-btn.disarmed-state {
+        background-color: var(--success);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    .toggle-btn.disarmed-state:hover {
+        background-color: #0d9e68;
+        transform: translateY(-2px);
+    }
+
+    /* Button to DISABLE (armed state) */
+    .toggle-btn.armed-state {
+        background-color: #e67e22; /* Orange */
+        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+    }
+    .toggle-btn.armed-state:hover {
+        background-color: #d35400;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

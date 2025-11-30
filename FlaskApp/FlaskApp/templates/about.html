@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}{{ project_name }} – About{% endblock %}
+
+{% block content %}
+
+<div class="container fade-in py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <h2 class="fw-bold mb-4"><i class="bi bi-info-circle me-2"></i>About {{ project_name }}</h2>
+
+            <!-- Project Description Card -->
+            <div class="card shadow-sm p-4 mb-5">
+                <h4 class="fw-bold text-primary mb-3">Project: {{ project_name }}</h4>
+                <p class="lead">
+                    This project is a comprehensive smart home security system centered around a Raspberry Pi. It integrates various sensors for environmental and security monitoring, utilizing an Ultrasonic sensor to detect doorstep presence, triggering a full alert system with a buzzer, LED, and camera snapshot functionality. All data and control commands are managed through this web dashboard, which communicates with the Raspberry Pi hardware via Adafruit IO.
+                </p>
+            </div>
+            
+            <!-- Team Introduction -->
+            <h3 class="fw-bold mb-4 text-purple"><i class="bi bi-people-fill me-2"></i>Team Members (HDN x OG)</h3>
+
+            <div class="row g-4 mb-5">
+                <!-- Team Member 1: HDN (Yacine Ihaddadene) -->
+                <div class="col-md-6">
+                    <div class="domicard text-center p-4">
+                        <!-- Photo Placeholder -->
+                        <img src="https://placehold.co/150x150/5c4aff/ffffff?text=HDN" 
+                             alt="Team Member HDN Photo" 
+                             class="team-photo mb-3 rounded-circle shadow-sm">
+                        <h5 class="fw-bold">Yacine Ihaddadene (HDN)</h5>
+                        <p class="text-muted">UI/UX</p>
+                    </div>
+                </div>
+                
+                <!-- Team Member 2: OG (Olivier Gingras) -->
+                <div class="col-md-6">
+                    <div class="domicard text-center p-4">
+                        <!-- Photo Placeholder -->
+                        <img src="https://placehold.co/150x150/7aa8ff/ffffff?text=OG" 
+                             alt="Team Member OG Photo" 
+                             class="team-photo mb-3 rounded-circle shadow-sm">
+                        <h5 class="fw-bold">Olivier Gingras (OG)</h5>
+                        <p class="text-muted">Security and Backend Logic / UI</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Components/Hardware -->
+            <h3 class="fw-bold mb-3 text-primary"><i class="bi bi-cpu-fill me-2"></i>Hardware & Components</h3>
+            <div class="card shadow-sm p-4 mb-5">
+                <ul class="list-unstyled component-list">
+                    <li><i class="bi bi-box-fill me-2 text-success"></i><strong>Raspberry Pi:</strong> (GPIO + I²C enabled)</li>
+                    <li><i class="bi bi-speaker-fill me-2 text-success"></i><strong>Ultrasonic Sensor (HC-SR04):</strong>
+                        <ul class="list-unstyled ms-4 small">
+                            <li>TRIG → BCM 5</li>
+                            <li>ECHO → BCM 12 (Use safe 3.3 V echo or voltage divider)</li>
+                        </ul>
+                    </li>
+                    <li><i class="bi bi-camera-fill me-2 text-success"></i><strong>Camera:</strong> PiCamera2 (Picamera2)</li>
+                    <li><i class="bi bi-display-fill me-2 text-success"></i><strong>I²C LCD 16x2:</strong> (PCF8574 @ 0x27 or 0x3F) — SDA/SCL on bus 1</li>
+                    <li><i class="bi bi-volume-up-fill me-2 text-success"></i><strong>Buzzer (Active):</strong> → BCM 18 (with series resistor)</li>
+                    <li><i class="bi bi-lightbulb-fill me-2 text-success"></i><strong>Alert LED (Red):</strong> → BCM 21 (with series resistor)</li>
+                    <li><i class="bi bi-lightbulb-fill me-2 text-success"></i><strong>Extra LEDs:</strong> Yellow BCM 16, Red BCM 23, Green BCM 24</li>
+                    <li><i class="bi bi-fan me-2 text-success"></i><strong>Fan / Relay Module:</strong>
+                        <ul class="list-unstyled ms-4 small">
+                            <li>Fan Control → BCM 22</li>
+                            <li>Relay IN (Active-Low) → BCM 17</li>
+                        </ul>
+                    </li>
+                </ul>
+                 <p class="text-muted small mt-3">
+                 <p class="text-muted small mt-3">
+                    *The system uses an <a target="_blank" class="fw-bold text-decoration-none" style="color: var(--purple);">Adafruit IO</a> dashboard for data communication.* </p>
+            </div>
+
+      <h3 class="fw-bold mb-3 text-secondary"><i class="bi bi-journal-text me-2"></i>Project Reflection</h3>
+            <div class="card shadow-sm p-4 mb-5">
+                <h4 class="fw-bold text-primary mb-3">Milestone 2: Integrated System Deployment</h4>
+                <p>
+                    In this milestone, we successfully achieved our main goal of <strong>integrating at least three devices and three sensors</strong>, and placing the entire system into a more organized enclosure. The addition of the <strong>LCD screen</strong> significantly enhanced the user experience by providing easily accessible, local status information.
+                </p>
+                <p>
+                    We improved the detection system by switching from a passive motion sensor to an <strong>Ultrasonic sensor (HC-SR04)</strong>, which allows for more reliable doorstep presence detection. This sensor is fully integrated with the buzzer, LCD, an LED, and the camera, creating a complete and responsive alert system.
+                </p>
+                <p>
+                    However, the project presented some challenges. The <strong>complexity of the breadboard wiring</strong>, due to the high number of connected components, made modifications and debugging difficult. Furthermore, working with the <strong>relay module</strong> was a new experience, requiring extra time to correctly understand its wiring and operational principles. Our only remaining issue is that we were unable to achieve the desired <strong>speed control for the motor</strong>.
+                </p>
+
+                <h4 class="fw-bold mt-4 text-purple">Final Part Checkpoint</h4>
+                <p>
+                    Looking back at the whole project, We are really proud of how much we were able to integrate and how cohesive the system feels now. The biggest win was definitely moving from just a pile of components to a working, integrated security system managed through a clean web dashboard. We learned a ton about both hardware interfacing and web service integration.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<footer class="text-center text-muted py-3">
+    <!-- Copyright symbol and dynamic year -->
+    &copy; {{ now().year }} {{ project_name }}. All rights reserved.
+</footer>
+
+{% endblock %}

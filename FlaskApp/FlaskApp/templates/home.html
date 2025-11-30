@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}DomiSafe – Home{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid fade-in">
+
+    <h2 class="fw-bold mb-4">System Overview</h2>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="domicard shadow-sm p-4 text-center">
+                <i class="bi bi-thermometer-half card-icon"></i>
+                <h3 class="sensor-value" id="tempValue">--</h3>
+                <p class="sensor-label">Temperature (°C)</p>
+                <small class="text-muted" id="tempTime">Last update: --</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="domicard shadow-sm p-4 text-center">
+                <i class="bi bi-droplet-half card-icon"></i>
+                <h3 class="sensor-value" id="humidityValue">--</h3>
+                <p class="sensor-label">Humidity (%)</p>
+                <small class="text-muted" id="humidityTime">Last update: --</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="domicard shadow-sm p-4 text-center">
+                <i class="bi bi-speedometer2 card-icon"></i>
+                <h3 class="sensor-value" id="pressureValue">--</h3>
+                <p class="sensor-label">Pressure (hPa)</p>
+                <small class="text-muted" id="pressureTime">Last update: --</small>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4 mt-4">
+
+        <div class="col-md-6">
+            <div class="domicard security-card p-4 h-100 text-center">
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-lock me-2"></i>Security System</h4>
+                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                    <i class="bi bi-shield-lock-fill security-large-icon mb-3" id="securityIcon"></i>
+                    <span id="securityStatus" class="security-status">--</span>
+                    <div class="security-stats-group mt-3">
+                        <p class="security-stats mb-1">
+                            <span id="motionEvents">Motion Events: --</span>
+                        </p>
+                        <p class="security-stats mb-0">
+                            <span id="smokeEvents">Smoke Events: --</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="domicard p-4 h-100">
+                <h4 class="fw-bold mb-3"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h4>
+                <div class="d-grid gap-3 pt-2">
+                    <a href="{{ url_for('environment_page') }}" class="action-btn action-blue">
+                        <i class="bi bi-cloud-sun"></i> View Environment
+                    </a>
+                    <a href="{{ url_for('security_page') }}" class="action-btn action-yellow">
+                        <i class="bi bi-shield-lock"></i> Manage Security
+                    </a>
+                    <a href="{{ url_for('controls_page') }}" class="action-btn action-blue">
+                        <i class="bi bi-sliders"></i> Control Devices
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-5">
+        <div class="col-12">
+            <div class="promo-card shadow-lg p-5 text-center">
+                <h3 class="promo-message fw-bold mb-4">
+                    "DomiSafe: Your complete smart home and security solution, engineered for peace of mind."
+                </h3>
+
+                <div class="image-rotator-container mx-auto">
+                    <img id="promo-image-1" class="promo-image active"
+                         src="https://github.com/user-attachments/assets/37421cf4-1b49-4fdd-a1e5-8d1907b74ed6"
+                         alt="Project Photo 1: Hardware box"
+                    >
+                    <img id="promo-image-2" class="promo-image"
+                         src="https://github.com/user-attachments/assets/67b9724c-76a7-4627-accb-14588d0711be"
+                         alt="Project Photo 2: Live dashboard view"
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ... (loadLiveSensor and loadSecurityStatus functions remain unchanged) ...
+
+async function loadLiveSensor(sensor, valueId, timeId) {
+    try {
+        const r = await fetch(`/api/live/${sensor}`);
+        const data = await r.json();
+
+        if (data && data.value !== undefined) {
+            document.getElementById(valueId).innerText = data.value;
+            document.getElementById(timeId).innerText =
+                "Last update: " + new Date(data.created_at).toLocaleTimeString();
+        }
+    } catch (err) {
+        // console.error("Error loading sensor:", sensor, err);
+    }
+}
+
+async function loadSecurityStatus() {
+    try {
+        const res = await fetch("/api/status/security");
+        const data = await res.json();
+
+        if (data && data.armed_status !== undefined) {
+            const statusElement = document.getElementById("securityStatus");
+            const iconElement = document.getElementById("securityIcon");
+            const motionElement = document.getElementById("motionEvents");
+            const smokeElement = document.getElementById("smokeEvents");
+
+            const isArmed = data.armed_status;
+            statusElement.innerText = isArmed ? "ARMED" : "DISARMED";
+
+            if (isArmed) {
+                statusElement.classList.add('status-armed');
+                statusElement.classList.remove('status-disarmed');
+                iconElement.classList.add('text-success');
+                iconElement.classList.remove('text-danger');
+            } else {
+                statusElement.classList.add('status-disarmed');
+                statusElement.classList.remove('status-armed');
+                iconElement.classList.add('text-danger');
+                iconElement.classList.remove('text-success');
+            }
+
+            // Note: Motion count is now filtered for the last 3 minutes by app.py
+            motionElement.innerText = `Motion Events: ${data.motion_count || 0} `;
+            smokeElement.innerText = `Smoke Events: ${data.smoke_count || 0}`;
+        } else {
+             document.getElementById("securityStatus").innerText = "N/A";
+        }
+    } catch (err) {
+        console.error("Error loading security status:", err);
+        document.getElementById("securityStatus").innerText = "Error";
+    }
+}
+
+
+function refreshSensors() {
+    loadLiveSensor("temperature", "tempValue", "tempTime");
+    loadLiveSensor("humidity", "humidityValue", "humidityTime");
+    loadLiveSensor("pressure", "pressureValue", "pressureTime");
+    loadSecurityStatus();
+}
+
+refreshSensors();
+setInterval(refreshSensors, 5000);
+
+
+// ===================================
+// NEW: IMAGE ROTATOR LOGIC
+// ===================================
+const images = ['promo-image-1', 'promo-image-2']; // IDs of the images
+let currentIndex = 0;
+
+function rotateImages() {
+    const currentImage = document.getElementById(images[currentIndex]);
+
+    // Calculate next index, wrapping around
+    currentIndex = (currentIndex + 1) % images.length;
+    const nextImage = document.getElementById(images[currentIndex]);
+
+    // Apply fade-out to current and fade-in to next
+    currentImage.classList.remove('active');
+    nextImage.classList.add('active');
+}
+
+// Start rotation after initial load (5 seconds interval)
+setInterval(rotateImages, 5000);
+</script>
+
+<style>
+    /* Fade-in animation */
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+
+    /* Security card specific styling (extending classes defined in style.css) */
+    .security-large-icon {
+        font-size: 5rem;
+    }
+    .security-stats-group {
+        margin-top: 10px;
+        font-size: 1.0rem;
+        color: var(--text-light);
+    }
+
+    .text-success { color: var(--success) !important; }
+    .text-danger { color: var(--danger) !important; }
+
+</style>
+
+{% endblock %}

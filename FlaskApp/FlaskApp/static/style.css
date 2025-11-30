@@ -1,0 +1,404 @@
+/* -----------------------------------------
+   GLOBAL THEME
+----------------------------------------- */
+:root {
+    --primary: #3B82F6;        /* Blue */
+    --primary-dark: #1E40AF;
+    --accent: #FACC15;         /* Yellow */
+    --danger: #EF4444;         /* Red */
+    --success: #10B981;        /* Green */
+    --purple: #8B5CF6;
+    --gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    --card-bg: #ffffff;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --shadow: 0 4px 14px rgba(0,0,0,0.12);
+    --radius: 14px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+    background: #eef1f7;
+    color: var(--text-dark);
+}
+
+/* -----------------------------------------
+   NAVBAR
+----------------------------------------- */
+.navbar {
+    background: var(--gradient);
+    padding: 15px 30px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 15px;
+}
+
+.navbar a:hover {
+    opacity: 0.8;
+}
+
+/* -----------------------------------------
+   PAGE TITLE
+----------------------------------------- */
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 25px;
+    color: var(--text-dark);
+}
+
+/* -----------------------------------------
+   CARD SYSTEM (Updated for .domicard and .info-card)
+----------------------------------------- */
+.card-grid {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 35px;
+}
+
+/* New/Improved Base Card Styles for .domicard (Home Page sensors) and .info-card (Security Page live data) */
+.domicard, .info-card {
+    background: var(--card-bg);
+    padding: 25px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: 0.2s ease-in-out;
+}
+
+.domicard:hover, .info-card:hover {
+    transform: translateY(-4px);
+}
+
+.card-icon {
+    font-size: 45px;
+    margin-bottom: 12px;
+    color: var(--primary);
+}
+
+/* Style for the main environment sensor values */
+.sensor-value {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+/* Style for the labels below the sensor values */
+.sensor-label {
+    margin-top: 5px;
+    font-size: 15px;
+    color: var(--text-light);
+}
+
+.info-card {
+    background: var(--card-bg);
+    padding: 30px 25px; /* Slightly more padding */
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: 0.2s ease-in-out;
+    border-bottom: 5px solid var(--primary); /* Highlight border */
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+}
+
+.info-card i {
+    font-size: 3rem; /* Larger icon */
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.info-card h4 {
+    margin-top: 5px;
+    font-size: 1.2rem; /* Clearer heading */
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.info-card h2 {
+    font-size: 3.5rem; /* Large, clear value */
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.info-card .unit {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    display: block;
+    margin-top: 5px;
+}
+
+
+/* NOTE: Keeping .card, .card-value, .card-label as they might be used elsewhere,
+   but overriding for .domicard/.sensor-value is more specific. */
+.card {
+    background: var(--card-bg);
+    padding: 25px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.card-value {
+    font-size: 34px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.card-label {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* -----------------------------------------
+   QUICK ACTION BUTTONS
+----------------------------------------- */
+.actions-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.action-btn {
+    padding: 18px;
+    border-radius: var(--radius);
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    color: white;
+}
+
+.action-blue {
+    background: var(--primary);
+}
+
+.action-blue:hover {
+    background: var(--primary-dark);
+}
+
+.action-yellow {
+    background: var(--accent);
+    color: #000;
+}
+
+.action-yellow:hover {
+    filter: brightness(0.9);
+}
+
+.action-gray {
+    background: #d1d5db;
+    color: #000;
+}
+
+.action-gray:hover {
+    background: #bfc4cc;
+}
+
+/* -----------------------------------------
+   SECURITY SECTION (Updated)
+----------------------------------------- */
+.security-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.security-status {
+    font-weight: 700;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    transition: background-color 0.4s ease; /* Added transition for smooth color change */
+}
+
+.status-disarmed {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+/* NEW: Status when ARMED */
+.status-armed {
+    background-color: var(--success);
+    color: white;
+}
+
+/* NEW: Pulsing animation for the icon when ARMED */
+@keyframes pulse-green {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* This targets the icon in home.html when it has the text-success class (i.e., when armed) */
+.security-large-icon.text-success {
+    animation: pulse-green 1.5s infinite;
+}
+
+.security-stats {
+    margin-top: 8px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.control-btn {
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ------------------ SUCCESSFUL TURN ON (Green Flash) ------------------ */
+/* Used when value=1 and successful (LED ON) */
+@keyframes flash-on-success {
+    0% { background-color: var(--success); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    50% { background-color: #0d9e68; box-shadow: 0 0 20px rgba(16, 185, 129, 1); }
+    100% { background-color: var(--success); box-shadow: none; }
+}
+
+.animate-on-success {
+    animation: flash-on-success 1.5s ease-in-out forwards;
+    /* Forces the button to look successful during the animation */
+    background-color: var(--success) !important;
+    border-color: var(--success) !important;
+    color: white !important;
+}
+
+
+/* ------------------ SUCCESSFUL TURN OFF (Neutral Gray Flash) ------------------ */
+/* Used when value=0 and successful (LED OFF/Buzzer OFF) */
+@keyframes flash-off-success {
+    /* Uses a neutral color for "off" success confirmation to distinguish from error/on */
+    0% { background-color: #9ca3af; box-shadow: 0 0 0 0 rgba(156, 163, 175, 0.7); }
+    50% { background-color: #6b7280; box-shadow: 0 0 20px rgba(156, 163, 175, 1); }
+    100% { background-color: #9ca3af; box-shadow: none; }
+}
+
+.animate-off-success {
+    animation: flash-off-success 1.5s ease-in-out forwards;
+    /* Forces the button to this gray color during the animation */
+    background-color: #9ca3af !important;
+    border-color: #9ca3af !important;
+    color: white !important;
+}
+
+
+/* ------------------ GENERIC ERROR (Red Flash) ------------------ */
+/* Used for any failure */
+@keyframes flash-error {
+    0% { background-color: var(--danger); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { background-color: #cc3939; box-shadow: 0 0 20px rgba(239, 68, 68, 1); }
+    100% { background-color: var(--danger); box-shadow: none; }
+}
+
+.animate-error {
+    animation: flash-error 1.5s ease-in-out forwards;
+    background-color: var(--danger) !important;
+    border-color: var(--danger) !important;
+    color: white !important;
+}
+
+
+.promo-card {
+    /* Uses gradient for an attractive background */
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    border-radius: var(--radius);
+    color: white;
+}
+
+.promo-message {
+    font-size: 1.8rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 10px;
+    line-height: 1.3;
+}
+
+.image-rotator-container {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    height: 350px; /* Ensures consistent display height */
+    margin-top: 30px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.promo-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    opacity: 0;
+    /* Fade transition: takes 1.5s to fade between images */
+    transition: opacity 1.5s ease-in-out;
+}
+
+.promo-image.active {
+    opacity: 1;
+}
+
+.text-purple {
+    color: var(--purple);
+}
+
+.team-photo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 5px solid var(--primary);
+}
+
+/* For the component list in the About page */
+.component-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+
+/* -----------------------------------------
+   FOOTER
+----------------------------------------- */
+/* Footer style for the copyright */
+footer {
+    border-top: 1px solid #e0e0e0;
+    margin-top: 30px;
+    background-color: #fcfcfc;
+}

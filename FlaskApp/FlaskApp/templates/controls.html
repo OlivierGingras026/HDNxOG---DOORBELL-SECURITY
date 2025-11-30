@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Device Controls{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+    <h2 class="fw-bold"><i class="bi bi-sliders me-2"></i>Device Controls</h2>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-4">
+        <div class="info-card text-center">
+            <i class="bi bi-lightbulb"></i>
+            <h4>LED 1</h4>
+
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-success control-btn" onclick="sendCmd('led1-control', 1, this)">
+                    <i class="bi bi-toggle-on"></i> Turn ON
+                </button>
+                <button class="btn btn-danger control-btn" onclick="sendCmd('led1-control', 0, this)">
+                    <i class="bi bi-toggle-off"></i> Turn OFF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="info-card text-center">
+            <i class="bi bi-lightbulb"></i>
+            <h4>LED 2</h4>
+
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-success control-btn" onclick="sendCmd('led2-control', 1, this)">
+                    <i class="bi bi-toggle-on"></i> Turn ON
+                </button>
+                <button class="btn btn-danger control-btn" onclick="sendCmd('led2-control', 0, this)">
+                    <i class="bi bi-toggle-off"></i> Turn OFF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="info-card text-center">
+            <i class="bi bi-lightbulb"></i>
+            <h4>LED 3</h4>
+
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-success control-btn" onclick="sendCmd('led3-control', 1, this)">
+                    <i class="bi bi-toggle-on"></i> Turn ON
+                </button>
+                <button class="btn btn-danger control-btn" onclick="sendCmd('led3-control', 0, this)">
+                    <i class="bi bi-toggle-off"></i> Turn OFF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="info-card text-center">
+            <i class="bi bi-power"></i>
+            <h4>Relay (Outlet)</h4>
+
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-success control-btn" onclick="sendCmd('relay-control', 1, this)">
+                    <i class="bi bi-plug-fill"></i> Turn ON
+                </button>
+                <button class="btn btn-danger control-btn" onclick="sendCmd('relay-control', 0, this)">
+                    <i class="bi bi-plug-slash"></i> Turn OFF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="info-card text-center">
+            <i class="bi bi-bell"></i>
+            <h4>Buzzer / Alarm</h4>
+
+            <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-danger control-btn" onclick="sendCmd('buzzer-control', 1, this)">
+                    <i class="bi bi-bell-fill"></i> Activate
+                </button>
+                <button class="btn btn-secondary control-btn" onclick="sendCmd('buzzer-control', 0, this)">
+                    <i class="bi bi-bell-slash"></i> Deactivate
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function sendCmd(feed, value, buttonElement) {
+    const originalText = buttonElement.innerHTML;
+    // IMPORTANT: Store all classes to restore the button to its original color/state
+    const originalClasses = buttonElement.className;
+
+    // 1. Disable button and show loading state
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+    try {
+        const res = await fetch(`/api/device/${feed}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ value })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            // Success: Use value=1 for the 'ON' animation, value=0 for the 'OFF' animation
+            runButtonAnimation(buttonElement, true, value);
+        } else {
+            // Failure: Use generic error animation
+            runButtonAnimation(buttonElement, false, value);
+        }
+    } catch (err) {
+        // Network error: Use generic error animation
+        runButtonAnimation(buttonElement, false, value);
+    } finally {
+        // 3. Revert button after animation (1.5 seconds delay)
+        setTimeout(() => {
+            // Restore original classes before restoring inner HTML
+            buttonElement.className = originalClasses;
+            buttonElement.innerHTML = originalText;
+            buttonElement.disabled = false;
+        }, 1500);
+    }
+}
+
+/* ===========================
+   BUTTON ANIMATION LOGIC
+============================= */
+function runButtonAnimation(buttonElement, success, commandValue) {
+    let baseClass;
+    const iconClass = success ? 'bi-check-circle-fill' : 'bi-x-octagon-fill';
+    const buttonText = success ? 'Done!' : 'Failed';
+
+    if (success) {
+        if (commandValue === 1) {
+            // SUCCESSFUL TURN ON (Value 1): Use the custom ON animation (Green flash)
+            baseClass = 'animate-on-success';
+        } else {
+            // SUCCESSFUL TURN OFF (Value 0): Use the custom OFF animation (Neutral flash)
+            baseClass = 'animate-off-success';
+        }
+    } else {
+        // FAILURE: Use the generic red/error animation
+        baseClass = 'animate-error';
+    }
+
+    buttonElement.innerHTML = `<i class="bi ${iconClass} me-2"></i> ${buttonText}`;
+    buttonElement.classList.add(baseClass);
+}
+</script>
+{% endblock %}

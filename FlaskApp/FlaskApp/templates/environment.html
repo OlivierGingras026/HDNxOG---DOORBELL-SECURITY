@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}Environment Monitoring{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+    <h2 class="fw-bold"><i class="bi bi-thermometer-half me-2"></i>Environment Monitoring</h2>
+</div>
+
+<!-- LIVE VALUES -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-thermometer-half"></i>
+            <h4>Temperature</h4>
+            <h2 id="live-temp">--</h2>
+            <span class="unit">°C</span>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-droplet-half"></i>
+            <h4>Humidity</h4>
+            <h2 id="live-hum">--</h2>
+            <span class="unit">%</span>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="info-card">
+            <i class="bi bi-speedometer2"></i>
+            <h4>Pressure</h4>
+            <h2 id="live-pres">--</h2>
+            <span class="unit">hPa</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- DATA SOURCE PANEL -->
+<div class="card shadow-sm p-4 mb-4">
+
+    <h4 class="fw-bold mb-3"><i class="bi bi-bar-chart-line me-2"></i>Sensor History</h4>
+
+    <label class="form-label fw-semibold">Select data source:</label>
+    <select id="mode" class="form-select mb-3">
+        <option value="live">LIVE (Last Hour)</option>
+        <option value="db">Database (Past Day)</option>
+    </select>
+
+    <div id="db-options" style="display:none;">
+        <label class="form-label fw-semibold">Select a date:</label>
+        <input id="envDate" type="date" class="form-control mb-3">
+    </div>
+
+    <label class="form-label fw-semibold">Select a sensor:</label>
+    <select id="sensor" class="form-select mb-4">
+        <option value="temperature">Temperature</option>
+        <option value="humidity">Humidity</option>
+        <option value="pressure">Pressure</option>
+    </select>
+
+    <button onclick="loadGraph()" class="btn btn-primary w-100 py-2">
+        <i class="bi bi-graph-up-arrow me-2"></i>Load Graph
+    </button>
+</div>
+
+<!-- GRAPH CARD -->
+<div class="card shadow-sm p-4">
+    <canvas id="historyChart" height="120"></canvas>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let chartRef = null;
+
+// =====================
+// Set today's date
+// =====================
+document.getElementById("envDate").value =
+    new Date().toISOString().slice(0,10);
+
+// =====================
+// LIVE VALUE REFRESH
+// =====================
+async function refreshLiveValues() {
+    const endpoints = {
+        temp: "/api/live/temperature",
+        hum: "/api/live/humidity",
+        pres: "/api/live/pressure"
+    };
+
+    for (const key in endpoints) {
+        try {
+            const res = await fetch(endpoints[key]);
+            const data = await res.json();
+            if (data && data.value !== undefined) {
+                document.getElementById("live-" + key).innerText = data.value;
+            }
+        } catch (err) {
+            console.log("Live fetch error:", err);
+        }
+    }
+}
+refreshLiveValues();
+setInterval(refreshLiveValues, 5000);
+
+// =====================
+// MODE SWITCH (Live / DB)
+// =====================
+document.getElementById("mode").addEventListener("change", () => {
+    const mode = document.getElementById("mode").value;
+    document.getElementById("db-options").style.display =
+        mode === "db" ? "block" : "none";
+});
+
+// =====================
+// LOAD GRAPH
+// =====================
+async function loadGraph() {
+    const mode = document.getElementById("mode").value;
+    const sensor = document.getElementById("sensor").value;
+    let data = [];
+
+    if (chartRef) chartRef.destroy();
+
+    try {
+        if (mode === "live") {
+            const res = await fetch(`/api/live/hour/${sensor}`);
+            data = await res.json();
+        } else {
+            const date = document.getElementById("envDate").value;
+            if (!date) {
+                alert("Please choose a date.");
+                return;
+            }
+            const res = await fetch(`/api/history_db/environment?sensor=${sensor}&date=${date}`);
+            data = await res.json();
+        }
+    } catch (err) {
+        console.log("Graph load error:", err);
+        return;
+    }
+
+    const labels = data.map(x => x.time);
+    const values = data.map(x => x.value);
+
+    const ctx = document.getElementById("historyChart");
+    chartRef = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels,
+            datasets: [{
+                label: sensor.toUpperCase(),
+                data: values,
+                borderWidth: 3,
+                borderColor: "#5c4aff",
+                pointRadius: 3,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}
