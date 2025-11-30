@@ -24,7 +24,10 @@
 
 ## Adafruit IO dashboard screenshot( Using CLI for User Interaction )
 
-<img width="1905" height="923" alt="image" src="https://github.com/user-attachments/assets/9696a5a0-8dab-471f-8a98-d6f5246a0103" />
+<img width="1907" height="923" alt="Screenshot 2025-11-30 102603" src="https://github.com/user-attachments/assets/547c90ff-be09-459f-8ec8-136502fec2a4" />
+
+
+
 
 
 ## Public cloud folder link with daily uploads
