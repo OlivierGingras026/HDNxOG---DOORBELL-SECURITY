@@ -27,6 +27,26 @@
 <img width="1907" height="923" alt="Screenshot 2025-11-30 102603" src="https://github.com/user-attachments/assets/547c90ff-be09-459f-8ec8-136502fec2a4" />
 
 
+## Flask App
+
+Home Page: 
+
+<img width="1919" height="926" alt="image" src="https://github.com/user-attachments/assets/a41876d7-ddea-490c-a39c-0731c3b976a8" />
+
+Environmental Page:
+
+<img width="1915" height="930" alt="image" src="https://github.com/user-attachments/assets/24ab705f-010e-4c44-a6c7-a613fefa44c7" />
+
+Security Page:
+
+<img width="1913" height="925" alt="image" src="https://github.com/user-attachments/assets/fa4369a3-e6d5-4f02-b7a4-423c5ca762dd" />
+
+Control Page:
+
+<img width="1911" height="825" alt="image" src="https://github.com/user-attachments/assets/ebf495a3-6122-42ac-a61e-b3e34d7e2d2b" />
+
+About Page:
+
 
 
 
