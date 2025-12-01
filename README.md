@@ -64,6 +64,10 @@ Some things were harder though. The breadboard wiring was a bit annoying because
 
 The only negative point we still have right now is that we weren’t able to reduce the motor speed the way we wanted.
 
+## Final Project CheckPoint
+
+Looking back at the whole project, We are really proud of how much we were able to integrate and how cohesive the system feels now. The biggest win was definitely moving from just a pile of components to a working, integrated security system managed through a clean web dashboard. We learned a ton about both hardware interfacing and web service integration.
+
 ## Photos of the Project
 
 <p align="center">
