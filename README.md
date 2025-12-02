@@ -45,9 +45,6 @@ Control Page:
 
 <img width="1911" height="825" alt="image" src="https://github.com/user-attachments/assets/ebf495a3-6122-42ac-a61e-b3e34d7e2d2b" />
 
-About Page:
-
-
 
 
 ## Public cloud folder link with daily uploads
