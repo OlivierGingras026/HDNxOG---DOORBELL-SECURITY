@@ -26,7 +26,7 @@
 
 <img width="1907" height="923" alt="Screenshot 2025-11-30 102603" src="https://github.com/user-attachments/assets/547c90ff-be09-459f-8ec8-136502fec2a4" />
 
-## Flask App
+## Flask App (Using Render and Neon DB)
 
 Home Page: 
 
